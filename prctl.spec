@@ -7,10 +7,12 @@ License:	GPL
 Group:		Applications/System
 Source0:	http://dl.sourceforge.net/prctl/%{name}-%{version}.tar.gz
 # Source0-md5:	f494842da5edc7c84adf506685301052
+# emulate PR_[GS]ET_UNALIGN on alpha using osf_[gs]etsysinfo
+Patch0:		%{name}-alpha-sysinfo.patch
 URL:		http://sourceforge.net/projects/prctl/
 BuildRequires:	sed >= 4.0
 # could be useful on other archs (alpha, hppa, s390), but Linux doesn't support it...
-ExclusiveArch:	ia64
+ExclusiveArch:	alpha ia64
 ExclusiveOS:	linux
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
@@ -30,9 +32,7 @@ tylko pod Linuksem 2.4 i nowszym.
 
 %prep
 %setup -q
-
-# take prctl() prototype from libc
-sed -i -e 's,linux/prctl\.h,sys/prctl.h,' prctl.c
+%patch0 -p1
 
 %build
 %configure2_13
