@@ -1,0 +1,103 @@
+--- prctl-1.4/prctl.c.orig	2004-11-28 00:57:17.000000000 +0100
++++ prctl-1.4/prctl.c	2004-11-28 00:55:27.000000000 +0100
+@@ -25,8 +25,12 @@
+ #include <getopt.h>
+ #include <errno.h>
+ #include <pwd.h>
+-#include <linux/prctl.h>
++#include <sys/prctl.h>
+ #include <string.h>
++#ifdef __alpha__
++#include <asm/sysinfo.h>
++#include <asm/unistd.h>
++#endif
+ 
+ /* Version */
+ #define VERSION	"1.4"
+@@ -37,6 +41,20 @@
+ #define PSR_UC		0x08
+ /* Command line options */
+ 
++#ifdef __alpha__
++unsigned long getsysinfo(unsigned long op, void *buffer, unsigned long nbytes,
++		int *start, void *arg)
++{
++	return syscall(__NR_osf_getsysinfo, op, buffer, nbytes, start, arg);
++}
++
++unsigned long setsysinfo(unsigned long op, void *buffer, unsigned long nbytes,
++		int *start, void *arg)
++{
++	return syscall(__NR_osf_setsysinfo, op, buffer, nbytes, start, arg);
++}
++#endif
++
+ struct option longopts[] = {
+ 	{"unaligned", 1, (int *)0, 'u'},
+ 	{"fpemu", 1, (int *)0, 'f'},
+@@ -72,6 +90,57 @@
+ 	int alignval, retval;
+ 	int umask;
+ 
++#ifdef __alpha__
++	if (prctl_val == -1) {
++		unsigned int val;
++
++		retval = 0;
++		if(getsysinfo(GSI_UACPROC, &val, sizeof(val), NULL, NULL) != 1) {
++			retval = -1;
++			goto out;
++		}
++		printf("%-13s= ", "unaligned");
++		if(!val)
++			printf("default\n");
++		else
++			printf("%s%s%s%s%s\n",
++				(val & UAC_NOPRINT) ? "silent" : "",
++				(val & UAC_NOPRINT) && (val & (UAC_NOFIX | UAC_SIGBUS)) ? "," : "",
++				(val & UAC_NOFIX) ? "nofix" : "",
++				(val & UAC_NOFIX) && (val & UAC_SIGBUS) ? "," : "",
++				(val & UAC_SIGBUS) ? "signal" : "");
++	} else {
++		unsigned int buf[2];
++		buf[0] = SSIN_UACPROC;
++		buf[1] = 0;
++		if(prctl_val & PR_UNALIGN_NOPRINT)
++			buf[1] |= UAC_NOPRINT;
++		if(prctl_val & PR_UNALIGN_SIGBUS)
++			buf[1] |= UAC_SIGBUS;
++		retval = 0;
++		if(setsysinfo(SSI_NVPAIRS, buf, 1, NULL, NULL) != 0)
++			retval = -1;
++		else {
++			if (verbose) {
++				printf("Set \"unaligned\" to ");
++				switch (prctl_val) {
++				case 0:
++					printf("\"default\"\n");
++					break;
++
++				case PR_UNALIGN_NOPRINT:
++					printf("\"silent\"\n");
++					break;
++
++				case PR_UNALIGN_SIGBUS:
++					printf("\"signal\"\n");
++					break;
++				}
++			}
++		}
++	}
++out:
++#else
+ 	/*
+ 	 * Check if we need to display the value or set it.
+ 	 */
+@@ -118,6 +187,7 @@
+ 			}
+ 		}
+ 	}
++#endif
+ 	if (retval == -1) {
+ 		fprintf(stderr, "Failed to %s \"unalign\" value: %s\n",
+ 			((prctl_val == -1)?"get":"set"), strerror(errno));
