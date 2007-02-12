@@ -1,5 +1,5 @@
 Summary:	Utility to perform process operations
-Summary(pl):	Narzêdzie do wykonywania operacji na procesach
+Summary(pl.UTF-8):   NarzÄ™dzie do wykonywania operacji na procesach
 Name:		prctl
 Version:	1.5
 Release:	1
@@ -23,11 +23,11 @@ unaligned memory access and handling of floating point software assist
 faults (on IPF systems). This utility works on Linux 2.4 and higher
 kernels only.
 
-%description -l pl
-Narzêdzie prctl umo¿liwia sterowanie zachowaniem procesów w ¶rodowisku
-uruchomieniowym. Obs³ugiwane zachowania to obs³uga niewyrównanego
-dostêpu do pamiêci oraz obs³uga wyj±tków dla programowej obs³ugi
-operacji zmiennoprzecinkowych (na systemach IPF). Narzêdzie to dzia³a
+%description -l pl.UTF-8
+NarzÄ™dzie prctl umoÅ¼liwia sterowanie zachowaniem procesÃ³w w Å›rodowisku
+uruchomieniowym. ObsÅ‚ugiwane zachowania to obsÅ‚uga niewyrÃ³wnanego
+dostÄ™pu do pamiÄ™ci oraz obsÅ‚uga wyjÄ…tkÃ³w dla programowej obsÅ‚ugi
+operacji zmiennoprzecinkowych (na systemach IPF). NarzÄ™dzie to dziaÅ‚a
 tylko pod Linuksem 2.4 i nowszym.
 
 %prep
