@@ -1,5 +1,5 @@
 Summary:	Utility to perform process operations
-Summary(pl.UTF-8):   Narzędzie do wykonywania operacji na procesach
+Summary(pl.UTF-8):	Narzędzie do wykonywania operacji na procesach
 Name:		prctl
 Version:	1.5
 Release:	1
