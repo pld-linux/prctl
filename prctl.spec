@@ -41,7 +41,7 @@ działa tylko pod Linuksem 2.4 i nowszym.
 rm -rf $RPM_BUILD_ROOT
 install -d $RPM_BUILD_ROOT%{_prefix}
 
-%{__make} install \
+%{__make} -j1 install \
 	prefix=$RPM_BUILD_ROOT%{_prefix} \
 	mandir=$RPM_BUILD_ROOT%{_mandir}/man1
 
