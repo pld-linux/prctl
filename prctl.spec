@@ -31,7 +31,7 @@ działa tylko pod Linuksem 2.4 i nowszym.
 
 %prep
 %setup -q
-%patch0 -p1
+%patch -P0 -p1
 
 %build
 %configure2_13
